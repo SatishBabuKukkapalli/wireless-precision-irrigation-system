@@ -1,0 +1,43 @@
+from flask import Flask, request import RPi.GPIO as GPIO import time import threading import requests import os app = Flask(__name__) RELAY_PIN = 17 
+GPIO.setwarnings(False) 
+GPIO.setmode(GPIO.BCM) GPIO.setup(RELAY_PIN, GPIO.OUT) 
+GPIO.output(RELAY_PIN, GPIO.HIGH) 
+STATE_FILE = "last_watered.txt" # Safe loading of last watered time def load_last_watered(): 
+    try: 
+        with open(STATE_FILE) as f: 
+            return float(f.read().strip())     except: 
+        return 0.0 
+last_watered_time = load_last_watered() WATER_INTERVAL = 300  # 5 minutes sensor_data = {} lock = threading.Lock() 
+THINGSPEAK_API_KEY = "Your_ThingSpeak_Write_API" 
+THINGSPEAK_URL = "https://api.thingspeak.com/update" 
+@app.route('/upload', methods=['POST']) def upload():     global last_watered_time     data = request.get_json()     if not data or 'id' not in data or 'soil' not in data: 
+        return "Invalid data", 400     with lock: 
+        sensor_data[data['id']] = data 
+        # Wait until all 4 unique node readings received (IDs 1 to 4)         if set(sensor_data.keys()) == {1, 2, 3, 4}: 
+            soil_readings = [sensor_data[i]['soil'] for i in range(1, 5)]             rain = sensor_data[1].get('rain', 1)             temp = sensor_data[1].get('temp')             hum = sensor_data[1].get('hum') 
+            print("\n================== [SUMMARY] ==================") 
+            for i, s in enumerate(soil_readings, 1): 
+                print(f"Soil{i}: {s}")             print(f"Rain: {'Detected' if rain == 0 else 'No'}")             if temp is not None and hum is not None: 
+                print(f"Temp: {temp}°C, Humidity: {hum}%") 
+            else: 
+                print("Temp: --, Humidity: --") 
+            # Send to ThingSpeak             payload = { 
+                'api_key': THINGSPEAK_API_KEY, 
+                'field1': soil_readings[0], 
+                'field2': rain, 
+                'field3': temp if temp is not None else '', 
+                'field4': hum if hum is not None else '', 
+                'field5': soil_readings[1], 
+                'field6': soil_readings[2], 
+                'field7': soil_readings[3] 
+            }             try: 
+                r = requests.get(THINGSPEAK_URL, params=payload)                 print(f"[INFO] ThingSpeak response: {r.text}")             except Exception as e: 
+                print("[THINGSPEAK ERROR]", e)             dry_count = sum(1 for s in soil_readings if s < 700)             now = time.time()             time_since_last = now - last_watered_time             print(f"[DEBUG] Time since last watering: {int(time_since_last)}s")             if time_since_last < WATER_INTERVAL: 
+                print("[SKIP] Wait time not met for watering.")             elif rain == 0: 
+                print("[SKIP] Rain detected. No watering.")             elif dry_count > 0: 
+                duration = {1: 15, 2: 30, 3: 40, 4: 60}.get(dry_count, 0)                 print(f"[ACTION] {dry_count} dry plants. Watering for {duration} sec.")                 GPIO.output(RELAY_PIN, GPIO.LOW) 
+                time.sleep(duration) 
+                GPIO.output(RELAY_PIN, GPIO.HIGH)                 last_watered_time = now                 with open(STATE_FILE, 'w') as f: 
+                    f.write(str(now))             else: 
+                print("[SKIP] All plants have sufficient moisture.")             print("------------------------------------------------------------")             sensor_data.clear()     return "OK", 200 if __name__ == '__main__': 
+    os.system("sudo fuser -k 5000/tcp")  # Kill anything using port 5000  app.run(host='0.0.0.0', port=5000) 
