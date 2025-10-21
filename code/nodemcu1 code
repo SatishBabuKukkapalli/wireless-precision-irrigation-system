@@ -1,0 +1,22 @@
+#include <ESP8266WiFi.h> 
+#include <DHT.h> 
+#include <ESP8266HTTPClient.h> 
+#define DHTPIN D4 
+#define DHTTYPE DHT11 
+#define SOIL_PIN A0 
+#define RAIN_PIN D5 
+DHT dht(DHTPIN, DHTTYPE); 
+const char* ssid = "ssid name"; const char* password = "enter password"; const char* RPI_SERVER = "192.168.184.205"; const int RPI_PORT = 5000; void setup() {   Serial.begin(115200);   dht.begin(); 
+  WiFi.begin(ssid, password);   while (WiFi.status() != WL_CONNECTED) delay(500); 
+} void loop() {   if (WiFi.status() == WL_CONNECTED) {     int soil = analogRead(SOIL_PIN);     int rain = digitalRead(RAIN_PIN);     float temp = dht.readTemperature();     float hum = dht.readHumidity(); 
+    WiFiClient client; 
+    HTTPClient http; 
+    String url = "http://" + String(RPI_SERVER) + ":" + String(RPI_PORT) + "/upload";     http.begin(client, url);     http.addHeader("Content-Type", "application/json"); 
+    String payload = "{\"id\":1,\"soil\":" + String(soil) + 
+                     ",\"rain\":" + String(rain) + 
+                     ",\"temp\":" + String(temp, 1) +                      ",\"hum\":" + String(hum, 1) + "}";     int httpCode = http.POST(payload); 
+    String response = http.getString(); 
+    Serial.println("Status: " + String(httpCode) + " | " + response);     http.end(); 
+  } 
+  delay(60000);  // Wait 60 seconds 
+} 
