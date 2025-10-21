@@ -103,4 +103,6 @@ This project provides an automated irrigation solution that:
 ### Harware setup
 ![image alt](https://github.com/SatishBabuKukkapalli/wireless-precision-irrigation-system/blob/df12e9836b373d9c419a6a19dc1c395e34fb5de2/hardware%20setup.jpg)
 ### Result
+![image alt](https://github.com/SatishBabuKukkapalli/wireless-precision-irrigation-system/blob/e28a25ead06230abe7663c94bf5478266f5bd76f/result.jpg)
+###   Thingspeak Result
 ![image alt]
