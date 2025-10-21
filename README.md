@@ -8,66 +8,81 @@ An IoT-based smart irrigation system that automates watering in multiple regions
 Traditional farming faces issues like inefficient water use, labor shortage, and climate challenges.
 This project provides an automated irrigation solution that:
 
-Collects environmental data through sensors
+- Collects environmental data through sensors
 
-Transmits readings wirelessly using HTTP protocol
+- Transmits readings wirelessly using HTTP protocol
 
-Uses Raspberry Pi as the main controller (server)
+- Uses Raspberry Pi as the main controller (server)
 
-Controls water flow automatically via relay & solenoid valve
+- Controls water flow automatically via relay & solenoid valve
 
-Uploads all data to ThingSpeak for visualization and analytics
+- Uploads all data to ThingSpeak for visualization and analytics
 
 # 🧠 System Architecture
-Components Used:
+### Components Used:
 
-Raspberry Pi (acts as gateway/server)
+1.Raspberry Pi (acts as gateway/server)
 
-NodeMCU (ESP8266) – sensor node (acts as client)
+2.NodeMCU (ESP8266) – sensor node (acts as client)
 
-DHT11 Sensor – temperature and humidity
+3.DHT11 Sensor – temperature and humidity
 
-Soil Moisture Sensor – detects soil dryness
+4.Soil Moisture Sensor – detects soil dryness
 
-Rain Sensor – detects rainfall
+5.Rain Sensor – detects rainfall
 
-12V Solenoid Valve – controls water flow
+6.12V Solenoid Valve – controls water flow
 
-Relay Module – for switching valve
+7.Relay Module – for switching valve
 
-12V Battery, connecting wires, and cables
+8.12V Battery, connecting wires, and cables
 
-RealVNC Viewer – for remote access to Raspberry Pi
+9.RealVNC Viewer – for remote access to Raspberry Pi
 
 # 🔗 Working Principle
 
-Each NodeMCU reads sensor values (soil moisture, temperature, humidity, rain).
+1.Each NodeMCU reads sensor values (soil moisture, temperature, humidity, rain).
 
-The data is sent to Raspberry Pi via HTTP POST request.
+2.The data is sent to Raspberry Pi via HTTP POST request.
 
-Raspberry Pi:
+### Raspberry Pi:
 
-Receives and analyzes data from all regions
+3.Receives and analyzes data from all regions
 
-Decides irrigation status (ON/OFF) based on predefined logic
+4.Decides irrigation status (ON/OFF) based on predefined logic
 
-Sends control signals to relay for solenoid valve operation
+5.Sends control signals to relay for solenoid valve operation
 
-Skips watering if rainfall is detected
+6.Skips watering if rainfall is detected
 
-All sensor data is sent to ThingSpeak Cloud for live monitoring and graph visualization.
+7.All sensor data is sent to ThingSpeak Cloud for live monitoring and graph visualization.
 
-The system can be remotely accessed using VNC Viewer.
+8.The system can be remotely accessed using VNC Viewer.
 
 # ⚙️ Software & Tools
 
-Arduino IDE – for NodeMCU programming
+- Arduino IDE – for NodeMCU programming
 
-Python (on Raspberry Pi) – to handle HTTP requests and relay control
+- Python (on Raspberry Pi) – to handle HTTP requests and relay control
 
-ThingSpeak – IoT cloud for data visualization
+- ThingSpeak – IoT cloud for data visualization
 
-RealVNC Viewer – for remote device access
+- RealVNC Viewer – for remote device access
 
 # flow chart
 ![image alt](https://github.com/SatishBabuKukkapalli/wireless-precision-irrigation-system/blob/086e42737907e387193919f5cc1a63347c44a978/fc.jpg)
+
+# How HTTP Works in Our Smart Irrigation Project?
+- Each NodeMCU acts as a client:
+  - It reads data from sensors (soil moisture, rain, DHT11).
+  - It sends this data using HTTP POST requests to the Raspberry Pi.
+- The Raspberry Pi acts as a server:
+  - It receives the HTTP data from each NodeMCU.
+  - It analyzes the data to decide whether watering is needed.
+- Based on the data, Raspberry Pi:
+  - Sends a signal to the relay to turn the solenoid valve ON/OFF.
+  - Time duration for watering is based on how many regions report dryness.
+  - If it's raining, watering is skipped.
+
+# Block diagram
+![image alt]
