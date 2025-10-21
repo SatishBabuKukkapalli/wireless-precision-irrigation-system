@@ -70,4 +70,4 @@ ThingSpeak – IoT cloud for data visualization
 RealVNC Viewer – for remote device access
 
 # flow chart
-![image alt](
+![image alt](https://github.com/SatishBabuKukkapalli/wireless-precision-irrigation-system/blob/086e42737907e387193919f5cc1a63347c44a978/fc.jpg)
