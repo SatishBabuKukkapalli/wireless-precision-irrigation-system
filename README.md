@@ -105,4 +105,5 @@ This project provides an automated irrigation solution that:
 ### Result
 ![image alt](https://github.com/SatishBabuKukkapalli/wireless-precision-irrigation-system/blob/e28a25ead06230abe7663c94bf5478266f5bd76f/result.jpg)
 ###   Thingspeak Result
-![image alt]
+![image alt](https://github.com/SatishBabuKukkapalli/wireless-precision-irrigation-system/blob/2dde975a02e6149c6d7be1bb1d8448b11f339694/thingspeak%20result.png)
+
