@@ -85,4 +85,16 @@ This project provides an automated irrigation solution that:
   - If it's raining, watering is skipped.
 
 # Block diagram
-![image alt]
+![image alt](https://github.com/SatishBabuKukkapalli/wireless-precision-irrigation-system/blob/c15397e994567fa85ce03bf4769a1e80be0399e7/proposed%20system.jpg)
+
+## 💻 Code Overview
+
+### NodeMCU Code (Client)
+- Reads sensor values
+- Sends data to Raspberry Pi using HTTP POST
+
+### Raspberry Pi Code (Server)
+- Receives HTTP data from NodeMCUs
+- Applies delay logic for irrigation
+- Sends data to ThingSpeak
+- Controls relay for solenoid valve
