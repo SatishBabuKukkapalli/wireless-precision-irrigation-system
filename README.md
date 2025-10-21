@@ -98,3 +98,7 @@ This project provides an automated irrigation solution that:
 - Applies delay logic for irrigation
 - Sends data to ThingSpeak
 - Controls relay for solenoid valve
+
+# outputs
+### Harware setup
+![image alt](
